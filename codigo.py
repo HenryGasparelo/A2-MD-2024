@@ -75,33 +75,52 @@ def gera_arvore(sequencias):
     # Retorna a arvore
     return arvore
 
+# Função que converte uma estrutura de árvore em um grafo representado por vértices e arestas
 def converter_para_grafo(pre_arvore):
+    # Inicializa a lista de vértices do grafo
     vertices = []
+    # Inicializa a lista de arestas do grafo
     arestas = []
+    # Dicionário usado para rastrear quantas vezes cada vértice foi encontrado, garantindo identificadores únicos
     vertice_counter = {}
 
+    # Função recursiva para processar cada vértice e suas conexões
     def gerar_conexoes(pai, subgrafo):
+        # Itera sobre cada filho no subgrafo atual
         for filho in subgrafo:
+            # Garante que o filho tenha um contador inicial no dicionário vertice_counter
             if filho not in vertice_counter:
-                vertice_counter[filho]=0
-            filho_id= f"{filho}_{vertice_counter[filho]}"
+                vertice_counter[filho] = 0
+            # Cria um identificador único para o filho, baseado em seu contador
+            filho_id = f"{filho}_{vertice_counter[filho]}"
+            # Adiciona o identificador do filho à lista de vértices
             vertices.append(filho_id)
-            vertice_counter[filho] +=1
+            # Incrementa o contador para o próximo identificador do mesmo vértice
+            vertice_counter[filho] += 1
 
+            # Adiciona uma aresta conectando o vértice pai ao filho no grafo
             arestas.append((pai, filho_id))
 
+            # Chama recursivamente a função para processar os filhos do vértice atual
             gerar_conexoes(filho_id, subgrafo[filho])
 
+    # Obtém o vértice raiz da árvore (primeira chave do dicionário)
     raiz = list(pre_arvore.keys())[0]
+    # Cria um identificador único para o vértice raiz
     raiz_id = f"{raiz}_0"
+    # Adiciona a raiz à lista de vértices
     vertices.append(raiz_id)
+    # Inicia a construção do grafo a partir da raiz
     gerar_conexoes(raiz_id, pre_arvore[raiz])
 
+    # Retorna as listas de vértices e arestas que representam o grafo
     return vertices, arestas
 
 grafo = gera_grafo_input(musicas)
 sequencias = path_precision_explorer(grafo, "M1", 375, 400)
 pre_arvore = gera_arvore(sequencias)
-arvore = (converter_para_grafo(pre_arvore))
+arvore = converter_para_grafo(pre_arvore)
 
+# Exibe os vértices e arestas do grafo convertido
 print(arvore)
+

@@ -71,8 +71,33 @@ def path_precision_explorer(grafo, musica_inicial, limite_inferior, limite_super
     # Retorna a lista com todas as sequencias possiveis 
     return algoritmo(grafo, musica_inicial, limite_inferior, limite_superior)
 
-sequencias = path_precision_explorer(grafo, "M1", 475, 500)
+sequencias = path_precision_explorer(grafo, "M1", 0, 650)
 print(sequencias)
+print("="*121)
 
-def gera_arvore(sequencia):
-    pass
+def gera_arvore(sequencias):
+    # Define a arvore inicialmente como um dicionario vazio
+    arvore = {}
+    # Para cada caminho, define o vertice inicial como a arvore para voltar para o nivel 0
+    for caminho in sequencias:
+        vertice_atual = arvore
+        # Para cada vertice do caminho, verifica se ele ja esta na arvore como filho do vertice atual, se estiver, define esse filho como vertice atual, se nao estiver, insere esse vertice como filho do vertice atual e define esse filho como vertice atual
+        for vertice in caminho:
+            if not vertice in vertice_atual:
+                vertice_atual[vertice] = {}
+            vertice_atual = vertice_atual[vertice]
+    
+    # Retorna a arvore
+    return arvore
+
+
+# Funcao temporaria para imprimir a arvore
+def imprimir_arvore(arvore, nivel=0):
+    for chave, valor in arvore.items():
+        print("  " * nivel + chave)
+        imprimir_arvore(valor, nivel + 1)
+        
+arvore = gera_arvore(sequencias)
+print(arvore)
+print("="*121)
+imprimir_arvore(arvore)

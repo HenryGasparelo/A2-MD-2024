@@ -1,3 +1,12 @@
+# Dados das músicas
+musicas = [
+    ["M1", ["M2", "M3"], 134],
+    ["M2", ["M1", "M4", "M5"], 112],
+    ["M3", ["M1", "M4"], 145],
+    ["M4", ["M2", "M5"], 120],
+    ["M5", ["M1", "M3"], 138]
+]
+
 def gera_grafo_input(musicas: list) -> list:
     # Define listas de vertices e arestas que serao preenchidas
     vertices = {}
@@ -16,21 +25,6 @@ def gera_grafo_input(musicas: list) -> list:
     grafo = [vertices, arestas]
     return grafo
 
-# Dados das músicas
-musicas = [
-    ["M1", ["M2", "M3"], 134],
-    ["M2", ["M1", "M4", "M5"], 112],
-    ["M3", ["M1", "M4"], 145],
-    ["M4", ["M2", "M5"], 120],
-    ["M5", ["M1", "M3"], 138]
-]
-
-grafo = gera_grafo_input(musicas)
-#print(grafo)
-
-
-#[{'M1': [['M2', 'M3'], 134], 'M2': [['M1', 'M4', 'M5'], 112], 'M3': [['M1', 'M4'], 145], 'M4': [['M2', 'M5'], 120], 'M5': [['M1', 'M3'], 138]}, {('M1', 'M2'): 112, ('M1', 'M3'): 145, ('M2', 'M1'): 134, ('M2', 'M4'): 120, ('M2', 'M5'): 138, ('M3', 'M1'): 134, ('M3', 'M4'): 120, ('M4', 'M2'): 112, ('M4', 'M5'): 138, ('M5', 'M1'): 134, ('M5', 'M3'): 145}]
-
 def path_precision_explorer(grafo, musica_inicial, limite_inferior, limite_superior, caminho=[], sequencias=[]):
 
     # Diminui dos limites inferior e superior a duracao da musica inicial
@@ -39,7 +33,6 @@ def path_precision_explorer(grafo, musica_inicial, limite_inferior, limite_super
 
     # Constroi o algoritmo com os limites atualizados
     def algoritmo(grafo, musica_inicial, limite_inferior, limite_superior, caminho=[], sequencias=[]):
-        print(f"Interacao com vertice: {musica_inicial} e caminho: {caminho}")
         # Adiciona ao caminho o vertice da iteracao
         caminho = caminho + [musica_inicial]
 
@@ -50,15 +43,11 @@ def path_precision_explorer(grafo, musica_inicial, limite_inferior, limite_super
 
         # Verifica se o comprimento do caminho esta dentro do intervalo desejado, se for, o adiciona a lista de sequencias possiveis
         if comprimento_caminho >= limite_inferior and comprimento_caminho <= limite_superior:
-            print(f"{caminho} dentro do intervalo")
             sequencias.append(caminho)
 
         # Verifica se o comprimento do caminho passou do limite superior, se passar, retorna a lista de caminhos sem adicionar esse caminho
         elif comprimento_caminho > limite_superior:
-            print(f"Caminho: {caminho} com comprimento maior que o limite superior")
             return sequencias
-        else:
-            print(f"Caminho: {caminho} com comprimento insuficiente")
 
         # Para cada vizinho do vertice da iteracao, caso o vizinho nao esteja no caminho, realiza o algoritmo com esse vizinho, adicionando os caminhos que estao no intervalo na lista de sequencias possiveis
         for vizinho in grafo[0][musica_inicial][0]:
@@ -70,10 +59,6 @@ def path_precision_explorer(grafo, musica_inicial, limite_inferior, limite_super
     
     # Retorna a lista com todas as sequencias possiveis 
     return algoritmo(grafo, musica_inicial, limite_inferior, limite_superior)
-
-sequencias = path_precision_explorer(grafo, "M1", 0, 650)
-print(sequencias)
-print("="*121)
 
 def gera_arvore(sequencias):
     # Define a arvore inicialmente como um dicionario vazio
@@ -90,14 +75,33 @@ def gera_arvore(sequencias):
     # Retorna a arvore
     return arvore
 
+def converter_para_grafo(pre_arvore):
+    vertices = []
+    arestas = []
+    vertice_counter = {}
 
-# Funcao temporaria para imprimir a arvore
-def imprimir_arvore(arvore, nivel=0):
-    for chave, valor in arvore.items():
-        print("  " * nivel + chave)
-        imprimir_arvore(valor, nivel + 1)
-        
-arvore = gera_arvore(sequencias)
+    def gerar_conexoes(pai, subgrafo):
+        for filho in subgrafo:
+            if filho not in vertice_counter:
+                vertice_counter[filho]=0
+            filho_id= f"{filho}_{vertice_counter[filho]}"
+            vertices.append(filho_id)
+            vertice_counter[filho] +=1
+
+            arestas.append((pai, filho_id))
+
+            gerar_conexoes(filho_id, subgrafo[filho])
+
+    raiz = list(pre_arvore.keys())[0]
+    raiz_id = f"{raiz}_0"
+    vertices.append(raiz_id)
+    gerar_conexoes(raiz_id, pre_arvore[raiz])
+
+    return vertices, arestas
+
+grafo = gera_grafo_input(musicas)
+sequencias = path_precision_explorer(grafo, "M1", 375, 400)
+pre_arvore = gera_arvore(sequencias)
+arvore = (converter_para_grafo(pre_arvore))
+
 print(arvore)
-print("="*121)
-imprimir_arvore(arvore)

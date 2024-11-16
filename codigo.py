@@ -1,11 +1,5 @@
-# Dados das músicas
-musicas = [
-    ["M1", ["M2", "M3"], 134],
-    ["M2", ["M1", "M4", "M5"], 112],
-    ["M3", ["M1", "M4"], 145],
-    ["M4", ["M2", "M5"], 120],
-    ["M5", ["M1", "M3"], 138]
-]
+import networkx as nx
+import matplotlib.pyplot as plt
 
 def gera_grafo_input(musicas: list) -> list:
     # Define listas de vertices e arestas que serao preenchidas
@@ -116,11 +110,71 @@ def converter_para_grafo(pre_arvore):
     # Retorna as listas de vértices e arestas que representam o grafo
     return vertices, arestas
 
+# Essa função não sei se precisa ser colocada no documento final
+def visualicao_arvore(vertices, arestas):
+    # Inicializa um grafo direcionado
+    arvore = nx.DiGraph()
+
+    # Adiciona os vértices ao grafo
+    arvore.add_nodes_from(vertices)
+
+    # Adiciona as arestas ao grafo
+    arvore.add_edges_from(arestas)
+
+    #Define a raiz
+    raiz = vertices[0]
+
+    def layout_arvore(grafo, raiz, largura= 1, x= 1, y= 1, nivel=0, pos= {}):
+        # Define a posição da raiz do grafo
+        pos[raiz]= (x, -(nivel * y))
+        
+        # Cria uma lista com todos os filhos do vertice definido como raiz
+        filhos = list(grafo.successors(raiz))
+
+        if len(filhos) > 0:
+            # Calcula a largura para cada subárvore
+            dx = largura / len(filhos)
+
+            # Itera sobre todos os filhos e posiciona eles recursivamente
+            for i, filho in enumerate(filhos):
+                # A posição x é calculada com base na posição do pai, ajustando para distribuir os filhos uniformemente dentro da largura determidada, com cada filho centralizado no seu intervalo dx. 
+                pos=layout_arvore(grafo = grafo, raiz = filho, largura = dx, x = x - largura / 2 + (i + 0.5) * dx, y = y, nivel=nivel+1, pos= pos)
+
+        return pos
+    
+    # Difine usando um dicionario de tupla a posição da vértice 
+    pos = layout_arvore(arvore, raiz)
+
+    # Desenha os vértices e as arestas no formato de árvore
+    plt.figure(figsize=(12, 8))
+    nx.draw_networkx_nodes(arvore, pos, node_size=500, node_color="lightblue")
+    nx.draw_networkx_edges(arvore, pos, arrowstyle="->", arrowsize=15, edge_color="gray")
+    nx.draw_networkx_labels(arvore, pos, font_size=10, font_color="black", font_weight="bold")
+
+    # Exibe o grafo no formato de árvore
+    plt.axis("off")
+    plt.show()
+
+# Dados das músicas
+musicas = [
+    ["M1", ["M2", "M3", "M4", "M5", "M6", "M7"], 134],
+    ["M2", ["M1", "M3", "M4", "M5", "M6", "M7"], 112],
+    ["M3", ["M1", "M2", "M4", "M5", "M6"], 145],
+    ["M4", ["M1", "M2", "M3", "M5", "M6", "M7"], 120],
+    ["M5", ["M1", "M2", "M3", "M4", "M6", "M7"], 138],
+    ["M6", ["M1", "M2", "M3", "M4", "M5", "M7"], 150],
+    ["M7", ["M1", "M2", "M4", "M5", "M6"], 160]
+]
+
 grafo = gera_grafo_input(musicas)
 sequencias = path_precision_explorer(grafo, "M1", 375, 400)
 pre_arvore = gera_arvore(sequencias)
-arvore = converter_para_grafo(pre_arvore)
+vertices, arestas = converter_para_grafo(pre_arvore)
+arvore = {"vertices": vertices, "arestas": arestas}
 
 # Exibe os vértices e arestas do grafo convertido
 print(arvore)
+
+# Exibe a visualição da arvore usando networkx e matplotlib
+visualicao_arvore(arvore["vertices"], arvore["arestas"])
 

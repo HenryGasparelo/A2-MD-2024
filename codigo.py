@@ -157,17 +157,19 @@ def visualicao_arvore(vertices, arestas):
 
 # Dados das músicas
 musicas = [
-    ["M1", ["M2", "M3", "M4", "M5", "M6", "M7"], 134],
-    ["M2", ["M1", "M3", "M4", "M5", "M6", "M7"], 112],
-    ["M3", ["M1", "M2", "M4", "M5", "M6"], 145],
-    ["M4", ["M1", "M2", "M3", "M5", "M6", "M7"], 120],
-    ["M5", ["M1", "M2", "M3", "M4", "M6", "M7"], 138],
-    ["M6", ["M1", "M2", "M3", "M4", "M5", "M7"], 150],
-    ["M7", ["M1", "M2", "M4", "M5", "M6"], 160]
+    ["M1", ["M2", "M3", "M4", "M5"], 100],  # M1 conecta-se a outros, mas tempo é curto.
+    ["M2", ["M1", "M3", "M5", "M6"], 450],  # Longo tempo, pode ser um gargalo.
+    ["M3", ["M1", "M2", "M4", "M5", "M6"], 80],  # M3 é rápido, mas conectado a muitos.
+    ["M4", ["M1", "M2", "M5"], 300],  # Tempo moderado, poucos vínculos.
+    ["M5", ["M1", "M3", "M4", "M6"], 200],  # Intermediário, liga muitos.
+    ["M6", ["M1", "M2", "M3", "M4"], 700],  # Tempo alto, pode causar conflito de ordem.
+    ["B1", ["B2", "B3"], 50],  # Subconjunto desconectado do restante, com tempos baixos.
+    ["B2", ["B1", "B3"], 500],  # Tempo elevado dentro de um subconjunto menor.
+    ["B3", ["B1", "B2"], 600]   # Outra alta dependência no subconjunto.
 ]
 
 grafo = gera_grafo_input(musicas)
-sequencias = path_precision_explorer(grafo, "M1", 375, 400)
+sequencias = path_precision_explorer(grafo, "M1", 700, 1200)
 pre_arvore = gera_arvore(sequencias)
 vertices, arestas = converter_para_grafo(pre_arvore)
 arvore = {"vertices": vertices, "arestas": arestas}

@@ -32,7 +32,7 @@ def path_precision_explorer(grafo, musica_inicial, limite_inferior, limite_super
 
         # Calcula o comprimento do caminho
         comprimento_caminho = 0
-        for i in range(len(caminho)-1):
+        for i in range(len(caminho)-1): 
             comprimento_caminho += grafo[1][(caminho[i], caminho[i+1])]
 
         # Verifica se o comprimento do caminho esta dentro do intervalo desejado, se for, o adiciona a lista de sequencias possiveis
@@ -157,15 +157,12 @@ def visualicao_arvore(vertices, arestas):
 
 # Dados das músicas
 musicas = [
-    ["M1", ["M2", "M3", "M4", "M5"], 100],  # M1 conecta-se a outros, mas tempo é curto.
-    ["M2", ["M1", "M3", "M5", "M6"], 450],  # Longo tempo, pode ser um gargalo.
-    ["M3", ["M1", "M2", "M4", "M5", "M6"], 80],  # M3 é rápido, mas conectado a muitos.
-    ["M4", ["M1", "M2", "M5"], 300],  # Tempo moderado, poucos vínculos.
-    ["M5", ["M1", "M3", "M4", "M6"], 200],  # Intermediário, liga muitos.
-    ["M6", ["M1", "M2", "M3", "M4"], 700],  # Tempo alto, pode causar conflito de ordem.
-    ["B1", ["B2", "B3"], 50],  # Subconjunto desconectado do restante, com tempos baixos.
-    ["B2", ["B1", "B3"], 500],  # Tempo elevado dentro de um subconjunto menor.
-    ["B3", ["B1", "B2"], 600]   # Outra alta dependência no subconjunto.
+    ["M1", ["M2", "M3", "M4", "M5"], 100],
+    ["M2", ["M1", "M3", "M5", "M6"], 450],
+    ["M3", ["M1", "M2", "M4", "M5", "M6"], 80],
+    ["M4", ["M1", "M2", "M5"], 300],
+    ["M5", ["M1", "M3", "M4", "M6"], 200],
+    ["M6", ["M1", "M2", "M3", "M4"], 700],
 ]
 
 grafo = gera_grafo_input(musicas)

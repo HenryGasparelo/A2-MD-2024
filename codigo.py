@@ -19,7 +19,7 @@ def gera_grafo_input(musicas: list) -> list:
     grafo = [vertices, arestas]
     return grafo
 
-def path_precision_explorer(grafo, musica_inicial, limite_inferior, limite_superior, caminho=[], sequencias=[]):
+def path_explorer_by_precision(grafo, musica_inicial, limite_inferior, limite_superior, caminho=[], sequencias=[]):
 
     # Diminui dos limites inferior e superior a duracao da musica inicial
     limite_superior -=  grafo[0][musica_inicial][1]
@@ -160,13 +160,14 @@ musicas = [
     ["M1", ["M2", "M3", "M4", "M5"], 100],
     ["M2", ["M1", "M3", "M5", "M6"], 450],
     ["M3", ["M1", "M2", "M4", "M5", "M6"], 80],
-    ["M4", ["M1", "M2", "M5"], 300],
+    ["M4", ["M1", "M2", "M5"], 50],
     ["M5", ["M1", "M3", "M4", "M6"], 200],
-    ["M6", ["M1", "M2", "M3", "M4"], 700],
+    ["M6", ["M1", "M2", "M3", "M4"], 600],
 ]
 
+
 grafo = gera_grafo_input(musicas)
-sequencias = path_precision_explorer(grafo, "M1", 700, 1200)
+sequencias = path_explorer_by_precision(grafo, "M1", 800, 900)
 pre_arvore = gera_arvore(sequencias)
 vertices, arestas = converter_para_grafo(pre_arvore)
 arvore = {"vertices": vertices, "arestas": arestas}
